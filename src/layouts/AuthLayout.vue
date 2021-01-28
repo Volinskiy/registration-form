@@ -9,7 +9,11 @@
 
 <style lang="less">
   .auth-layout {
-    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    min-height: 100vh;
     background-color: #E5E5E5;
   }
 </style>
