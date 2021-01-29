@@ -9,6 +9,7 @@
 
     display: flex;
     align-items: center;
+    min-height: @checkbox-size;
     padding-left: @indent;
     outline: none;
     font-weight: 500;
@@ -33,6 +34,7 @@
         border-style: solid;
         border-color: var(--border-color);
         border-radius: 5px;
+        cursor: pointer;
         
         &::after {
             @border: ~"2px solid @{controls-active-color}";

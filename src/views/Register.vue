@@ -6,7 +6,6 @@
       <router-link
         to="/login"
         class="link">
-        
         Войти
       </router-link>
     </p>
@@ -28,12 +27,20 @@
       </p>
     </label>
 
+    <button class="form-reg__button-submit" type="submit">Зарегистрироваться</button>
+
   </form>
 
 </template>
 
 <style lang="less">
   @import '../assets/variables.less';
+
+  input {
+    &[placeholder] {
+      color: #7C9CBF;
+    }
+  }
 
   .form-reg {
     width: 460px;
@@ -64,6 +71,43 @@
     &__description {
       line-height: 1.3em;
       color: #2C2738;
+    }
+
+    &__button-submit {
+      --border-color: @controls-active-color;
+      --background-color: @controls-active-color;
+      --color: #EBF4F8;
+      --box-shadow: 0px 2px 4px rgba(44, 39, 56, 0.08), 0px 4px 8px rgba(44, 39, 56, 0.08);
+
+      display: block;
+      width: 100%;
+      padding: 16px 0 16px 0;
+      margin-top: 36px;
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 21px;
+      color: var(--color);
+      background-color: var(--background-color);
+      box-shadow: var(--box-shadow);
+      border-width: 2px;
+      border-style:  solid;
+      border-color: var(--border-color);
+      border-radius: 6px;
+      outline: 0;
+
+
+      &:focus,
+      &:active,
+      &:hover {
+        --border-color:rgba(44, 39, 56, 0.86);
+        --box-shadow: 0px 12px 24px rgba(44, 39, 56, 0.08), 0px 24px 48px rgba(44, 39, 56, 0.16);
+      }
+
+      &:disabled {
+        --color: #B1B5BF;
+        --background-color: #DBE2EA;
+        --border-color: #DBE2EA;
+      }
     }
 
   }
