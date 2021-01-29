@@ -5,7 +5,7 @@
       Уже есть аккаунт?
       <router-link
         to="/login"
-        class="form-reg__link-login link">
+        class="link">
         
         Войти
       </router-link>
@@ -22,8 +22,9 @@
     
     <label class="checkbox form-reg__checkbox" >
       <input type="checkbox" tabindex="0">
-      <p class="checkbox__text">
-        Принимаю <a class="link" href="#" target="blank">условия</a> использования
+      <span class="checkbox__box"></span>
+      <p>
+        Принимаю <a class="link" href="#" target="blank">условия</a>  использования
       </p>
     </label>
 
@@ -63,22 +64,6 @@
     &__description {
       line-height: 1.3em;
       color: #2C2738;
-    }
-
-    &__link-login {
-      color: @link-color;
-
-      &:hover,
-      &:focus,
-      &:active {
-        text-decoration: underline;
-        outline: none;
-        cursor: pointer;
-      }
-    }
-
-    &__control-input-text {
-
     }
 
   }
