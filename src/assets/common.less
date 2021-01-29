@@ -1,0 +1,21 @@
+@import './fonts/fonts.css';
+@import './normalize.css';
+@import './reset.less';
+
+/* Стили БЭМ-блоков, не относящихся к конкретному компоненту */
+@import './blocks/checkbox/checkbox.less';
+@import './blocks/checkbox/link.less';
+
+body {
+  font-family: 'IBM Plex Sans', 'Roboto', 'Open Sans', sans-serif;
+  font-weight: 400;
+}
+
+input {
+  &[placeholder],
+  &::-moz-placeholder,
+  &:-moz-placeholder,
+  &:-ms-input-placeholder {
+    color: #7C9CBF;
+  }
+}

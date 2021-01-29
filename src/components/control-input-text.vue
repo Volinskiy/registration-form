@@ -30,8 +30,10 @@ export default {
 </script>
 
 <style lang="less">
+  @import '../assets/variables.less';
+
   .control-input-text {
-    @elements-margin-bottom: 8px;
+    @elements-margin-bottom: 7px;
     
     display: flex;
     flex-direction: column;
@@ -54,32 +56,28 @@ export default {
     &__label-text {
       margin-bottom: @elements-margin-bottom;
       font-weight: 500;
-      color: #756F86;
+      line-height: 21px;
+      color: @text-gray;
     }
 
     &__input {
-      @padding-top-bottom: 16px;
+      @padding-top-bottom: 15px;
 
       border-radius: 6px;
-      padding-top: @padding-top-bottom;
-      padding-bottom: @padding-top-bottom;
-      padding-left: 16px;
-      padding-right: 16px;
-      line-height: 1.3em;
-      border: 1px solid #DBE2EA;
+      padding: @padding-top-bottom;
+      line-height: 21px;
+      border: 1px solid @controls-color;
       background: #FFFFFF;
       box-shadow: 0px 4px 8px rgba(44, 39, 56, 0.04);
 
       &:active,
       &:focus {
         border-width: 2px;
-        border-color: #0880AE;
+        border-color: @controls-active-color;
         outline: none;
         // Учитываем изменение ширины border при фокусе/активности
-        padding-top: calc(@padding-top-bottom - 1px);
-        padding-bottom: calc(@padding-top-bottom - 1px);
-
-      }
+        padding: calc(@padding-top-bottom - 1px);
+      } 
     }
 
     &__warn-mess {

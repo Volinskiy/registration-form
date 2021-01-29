@@ -5,7 +5,7 @@
       Уже есть аккаунт?
       <router-link
         to="/login"
-        class="form-reg__link-login">
+        class="form-reg__link-login link">
         
         Войти
       </router-link>
@@ -19,10 +19,21 @@
       :key="input.id"
       class="form-reg__control-input-text"
     />
+    
+    <label class="checkbox form-reg__checkbox" >
+      <input type="checkbox" tabindex="0">
+      <p class="checkbox__text">
+        Принимаю <a class="link" href="#" target="blank">условия</a> использования
+      </p>
+    </label>
+
   </form>
+
 </template>
 
 <style lang="less">
+  @import '../assets/variables.less';
+
   .form-reg {
     width: 460px;
     padding: 40px 30px;
@@ -43,21 +54,27 @@
     }
   
     &__header {
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       font-size: 34px;
       line-height: 1.3em;
-
+      color: @text-gray;
     }
 
     &__description {
       line-height: 1.3em;
+      color: #2C2738;
     }
 
     &__link-login {
-      @color: #0880AE; 
-      
-      color: @color;
-      outline-color: @color;
+      color: @link-color;
+
+      &:hover,
+      &:focus,
+      &:active {
+        text-decoration: underline;
+        outline: none;
+        cursor: pointer;
+      }
     }
 
     &__control-input-text {
@@ -79,14 +96,14 @@
           {
             label: 'Имя',
             warningMess: 'Имя введено неверное',
-            placeholder: 'Введите ваше имя',
+            placeholder: 'Введите Ваше имя',
             valid: false,
             id: 1,
           },
           {
             label: 'Email',
             warningMess: 'Email введен неверное',
-            placeholder: 'Введите ваш email',
+            placeholder: 'Введите Ваш email',
             valid: true,
             id: 2,
           },
@@ -94,6 +111,13 @@
             label: 'Номер телефона',
             warningMess: 'Номер телефона введена неверное',
             placeholder: 'Введите номер телефона',
+            valid: true,
+            id: 3,
+          },
+          {
+            label: 'Селект выбора города',
+            warningMess: 'Селект выбора города',
+            placeholder: 'Селект выбора города',
             valid: true,
             id: 3,
           },

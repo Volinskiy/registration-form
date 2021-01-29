@@ -6,5 +6,5 @@
 </template>
 
 <style lang="less">
-  @import 'assets/common.css';
+  @import 'assets/common.less';
 </style>

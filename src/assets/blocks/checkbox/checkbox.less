@@ -1,0 +1,117 @@
+@import '../../variables.less';
+
+.checkbox {
+    --border-color: @controls-color;
+    --border-width: 1px;
+
+    @checkbox-size: 28px;
+
+    display: flex;
+    align-items: center;
+    height: @checkbox-size;
+    outline: none;
+    
+    
+    input {
+        position: absolute;
+        z-index: -1;
+        opacity: 0;
+    }
+
+    input:hover + &__text,
+    input:focus + &__text,
+    input:active + &__text{
+        --border-color: @controls-active-color;
+        --border-width: 2px;
+    }
+    
+    
+    &__text {
+        @line-height: 1.3em;
+
+        display: inline-block;
+        position: relative;
+        margin: 0;
+        padding: 0 0 0 36px;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: @line-height;
+        color: @text-gray;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+        
+        &::before {
+            content: '';
+            position: absolute;
+            // Центрируем раьку чекбокса относительно
+            top: calc(-1 * (@checkbox-size - @line-height) / 2);
+            left: 0;
+            box-sizing: border-box;
+            width: @checkbox-size;
+            height: @checkbox-size;
+            border-width: var(--border-width);
+            border-style: solid;
+            border-color: var(--border-color);
+            border-radius: 5px;
+            
+        }
+        
+        &::after {
+            @border: ~"2px solid @{controls-active-color}";
+
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 11px;
+            box-sizing: border-box;
+            width: 6px;
+            height: 13px;
+            border-right: @border;
+            border-bottom: @border;
+            opacity: 0;
+            transform: rotate(35deg);
+            transition: .2s;
+        }
+    }
+
+
+    input:checked + &__text::after {
+        opacity: 1;
+
+    }
+    
+    input:checked:focus + &__text::after,
+    input:checked:active + &__text::after,
+    input:checked:hover + &__text::after {
+        border-color: white;
+    }
+
+    input:checked + &__text::before {
+        border-color: @controls-active-color;
+        border-width: 2px;
+
+    }
+    
+    input:checked:focus + &__text::before,
+    input:checked:active + &__text::before,
+    input:checked:hover + &__text::before {
+        background-color: @controls-active-color;
+    }
+
+    a {
+        color: @link-color;
+
+        &:hover,
+        &:focus,
+        &:active {
+            cursor: pointer;
+            text-decoration: underline;
+            outline: none;
+        }
+    }
+}

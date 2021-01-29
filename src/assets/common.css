@@ -1,8 +1,0 @@
-@import './fonts/fonts.css';
-@import './normalize.css';
-@import './reset.less';
-
-body {
-  font-family: 'IBM Plex Sans', 'Roboto', 'Open Sans', sans-serif;
-  font-weight: 400;
-}
