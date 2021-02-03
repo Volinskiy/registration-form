@@ -18,6 +18,14 @@
       :key="input.id"
       class="form-reg__control-input-text"
     />
+
+    <ControlSelect
+      :label="selectLanguage.label"
+      :warning-mess="selectLanguage.warningMess"
+      :placeholder="selectLanguage.placeholder"
+      :valid="selectLanguage.valid"
+      class="form-reg__control-select"
+    />
     
     <label class="checkbox form-reg__checkbox" >
       <input type="checkbox" tabindex="0">
@@ -33,14 +41,57 @@
 
 </template>
 
+
+<script>
+  import ControlInpuTtext from '@/components/control-input-text.vue'
+  import ControlSelect from '@/components/control-select.vue'
+
+  export default {
+    
+    data() {
+      return {
+        inputs: [
+          {
+            label: 'Имя',
+            warningMess: 'Имя введено неверное',
+            placeholder: 'Введите Ваше имя',
+            valid: false,
+            id: 1,
+          },
+          {
+            label: 'Email',
+            warningMess: 'Email введен неверное',
+            placeholder: 'Введите Ваш email',
+            valid: true,
+            id: 2,
+          },
+          {
+            label: 'Номер телефона',
+            warningMess: 'Номер телефона введена неверное',
+            placeholder: 'Введите номер телефона',
+            valid: true,
+            id: 3,
+          },
+        ],
+        selectLanguage: {
+          label: 'Язык',
+          placeholder: 'Выберите язык',
+          warningMess: 'Язык не выбран',
+          valid: true,
+        }
+      }
+    },
+    components: {
+      ControlInpuTtext,
+      ControlSelect,
+    },
+  }
+
+</script>
+
 <style lang="less">
   @import '../assets/variables.less';
-
-  input {
-    &[placeholder] {
-      color: #7C9CBF;
-    }
-  }
+  @import '../assets/blocks/checkbox.less';
 
   .form-reg {
     width: 460px;
@@ -92,7 +143,7 @@
       border-width: 2px;
       border-style:  solid;
       border-color: var(--border-color);
-      border-radius: 6px;
+      border-radius: @controls-border-radius;
       outline: 0;
 
 
@@ -113,49 +164,3 @@
   }
 
 </style>
-
-<script>
-  import ControlInpuTtext from '@/components/control-input-text.vue'
-
-  export default {
-    
-    data() {
-      return {
-        inputs: [
-          {
-            label: 'Имя',
-            warningMess: 'Имя введено неверное',
-            placeholder: 'Введите Ваше имя',
-            valid: false,
-            id: 1,
-          },
-          {
-            label: 'Email',
-            warningMess: 'Email введен неверное',
-            placeholder: 'Введите Ваш email',
-            valid: true,
-            id: 2,
-          },
-          {
-            label: 'Номер телефона',
-            warningMess: 'Номер телефона введена неверное',
-            placeholder: 'Введите номер телефона',
-            valid: true,
-            id: 3,
-          },
-          {
-            label: 'Селект выбора города',
-            warningMess: 'Селект выбора города',
-            placeholder: 'Селект выбора города',
-            valid: true,
-            id: 3,
-          },
-        ]
-      }
-    },
-    components: {
-      ControlInpuTtext
-    },
-  }
-
-</script>

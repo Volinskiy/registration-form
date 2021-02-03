@@ -1,0 +1,26 @@
+@import '../variables.less';
+
+.input-text {
+  &::placeholder {
+    color: #7C9CBF;
+  }
+
+  @padding: 15px;
+
+  border-radius: @controls-border-radius;
+  padding: @padding;
+  line-height: 21px;
+  border: 1px solid @controls-color;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 8px rgba(44, 39, 56, 0.04);
+  color: #2C2738;
+
+  &:active,
+  &:focus {
+    border-width: 2px;
+    border-color: @controls-active-color;
+    outline: none;
+    // Учитываем изменение ширины border при фокусе/активности
+    padding: calc(@padding - 1px);
+  } 
+}
