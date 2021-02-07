@@ -1,4 +1,4 @@
-<!-- TODO импортировать LangList по условию isSelectCildComponent == true -->
+<!-- TODO импортировать LangList по условию hasDropDown == true -->
 
 <template>
   <div
@@ -6,30 +6,33 @@
   >
     <label
       class="control-input-text__label"
-      :class="{'is-select' : isSelectCildComponent}"
+      :class="{'has-dropdown' : hasDropdown}"
     >
       <span class="control-input-text__label-text">
         {{ label }}
       </span>
       <input
+        v-model="inputValue"
         type="text"
         class="input-text"
         :placeholder="placeholder"
-        :value="value"
         v-on="getInputListeners"
+        ref="input"
       >
     
-    <LangList
-      v-if="isSelectCildComponent"
-      v-show="isLanglistLangOpen"
-      :langList="isSelectCildComponent ? langList : null"
-      :has-langlist-focus="hasLanglistFocus"
-      :has-langlist-hover="hasLanglistHover"
-      class="control-input-text__langlist"
+    <DropDown
+      v-if="hasDropdown"
+      v-show="isDropdownOpen"
+      :dropdown-list="hasDropdown ? dropdownList : null"
+      :move-next-dropdown-item="selectNextDropdownItem"
+      :move-previous-dropdown-item="selectPreviousDropdownItem"
+      :move-inputed-item="matchItem"
+      @selected-new-current-element="pushDropdownItem"
+      class="control-input-text__dropdown"
     />
+
     
     </label>
-
 
     <span
       :class="{ active: !valid }"
@@ -41,7 +44,7 @@
 </template>
 
 <script>
-import LangList from '@/components/lang-list.vue'
+import DropDown from '@/components/drop-down.vue'
 
 
 export default {
@@ -51,69 +54,111 @@ export default {
     placeholder: String,
     valid: Boolean,
     value: String,
-    isSelectCildComponent: {
+    hasDropdown: {
       type: Boolean,
       default: false
     },
-    hasLanglistHover: {
-      type: Boolean,
-      default: false
-    },
-    // TODO сделать условное добавление свойства при isSelectCildComponent == true
-    langList: {
-      type: Array,
+    // TODO сделать условное добавление свойства при hasDropdown == true
+    dropdownList: {
+      type: Object,
       default: function () {
-        return ['Немецкий', 'Белорусский']
-      }
+        return {
+          'ab': 'Abkhaz',
+          'aa': 'Afar',
+          'bm': 'Bambara',
+          'ba': 'Bashkir',
+          'en': 'English',
+          'eo': 'Esperanto',
+          'gv': 'Manx',
+          'mk': 'Macedonian',
+          'rm': 'Romansh',
+          'sn': 'Shona',
+          'uz': 'Uzbek',
+          'yo': 'Yoruba',
+        }
+      },
     },
+    matchItem: Number,
   },
   data() {
     return {
-      isLanglistLangOpen: false,
-      hasLanglistFocus: false,
+      isDropdownOpen: false,
+      selectNextDropdownItem: false,
+      selectPreviousDropdownItem: false,
+      inputValue: '',
     }
   },
   computed: {
     getInputListeners() {
-      if (this.isSelectCildComponent) {
+      if (this.hasDropdown) {
         return {
           input: (e) => {
-            this.$emit('input', e.target.value)
+            this.passMatchedItem()
           },
           keydown: (e) => {
-            if (e.keyCode == 40) {
-              this.hasLanglistFocus = true
-          }},
+            switch (e.keyCode) {
+              case 40:
+                this.selectNextDropdownItem = !this.selectNextDropdownItem
+                break
+              case 38:
+                // Превентим перемещение курсора в начало строки
+                e.preventDefault()
+                this.selectPreviousDropdownItem = !this.selectPreviousDropdownItem
+                break
+            }
+          },
           focus: () => {
-            this.isLanglistLangOpen = true
+            this.isDropdownOpen = true
           },
           blur:() => {
-            this.isLanglistLangOpen = false
+            // this.isDropdownOpen = false
           },
         }
       }
     },
-    getComponentListeners() {
-      if (this.isSelectCildComponent) {
-        return {
-        }
+  },
+  methods: {
+    pushDropdownItem: function(selectedValue) {
+      this.$refs.input.value = selectedValue
+    },
+    passMatchedItem() {
+      let matchElementNumber = this.matchInputElement(this.inputValue)
+      if (matchElementNumber !== null) {
+        this.matchItem = matchElementNumber
+
       }
+    },
+    matchInputElement(serchedSubstrName) {
+      let index = 0;
+      index = Object.entries(this.dropdownList).map(curent => curent[1]).findIndex(elem => elem.startsWith(serchedSubstrName))
+      // index = Object.entries(this.dropdownList).map(curent => curent[1]).findIndex(elem => elem == serchedSubstrName)
+      if (index != -1) {
+        return index
+      } else {
+        return null
+      }
+    },
+    compareStrings(substr) {
+      startsWith
     }
   },
+  watch: {
+
+  },
   components: {
-    LangList
+    DropDown
   }
 };
   
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 @import '../assets/variables.less';
 @import '../assets/blocks/input-text.less';
 
 
 
-.is-select {
+.has-dropdown {
   position: relative;
 }
 
@@ -156,7 +201,7 @@ export default {
     }
   }
 
-  &__langlist {
+  &__dropdown {
     @list-height: 200px;
     position: absolute;
     height: @list-height;

@@ -10,7 +10,7 @@
       </router-link>
     </p>
 
-    <ControlInpuTtext v-for="input in inputs"
+    <ControlInputText v-for="input in inputs"
       :label="input.label"
       :warning-mess="input.warningMess"
       :placeholder="input.placeholder"
@@ -19,12 +19,13 @@
       class="form-reg__control-input-text"
     />
 
-    <ControlSelect
+    <ControlInputText
       :label="selectLanguage.label"
       :warning-mess="selectLanguage.warningMess"
       :placeholder="selectLanguage.placeholder"
       :valid="selectLanguage.valid"
-      class="form-reg__control-select"
+      :has-dropdown="true"
+      :dropdown-list="langList"
     />
     
     <label class="checkbox form-reg__checkbox" >
@@ -43,8 +44,8 @@
 
 
 <script>
-  import ControlInpuTtext from '@/components/control-input-text.vue'
-  import ControlSelect from '@/components/control-select.vue'
+  import ControlInputText from '@/components/control-input-text.vue'
+  // import ControlSelect from '@/components/control-select.vue'
 
   export default {
     
@@ -78,13 +79,17 @@
           placeholder: 'Выберите язык',
           warningMess: 'Язык не выбран',
           valid: true,
-        }
+        },
+        langList: null,
       }
     },
     components: {
-      ControlInpuTtext,
-      ControlSelect,
+      ControlInputText,
+      // ControlSelect,
     },
+    created: function() {
+      this.langList = this.$store.state.langList
+    }
   }
 
 </script>
