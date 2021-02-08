@@ -1,14 +1,16 @@
 <template>
   <div class="dropdown">
-    <ul class="dropdown__list">
-      <li
-        v-for="(val, key, index) in dropdownList"
-        :ref="index"
-        :key="key"
-        @click="toggleClickedItemToCurrent(index)"
-        class="dropdown__item"
-        >{{ val }}</li>
-    </ul>
+    <div class="dropdown__wrapper">
+      <ul class="dropdown__list">
+        <li
+          v-for="(val, key, index) in dropdownList"
+          :ref="index"
+          :key="key"
+          @click="toggleClickedItemToCurrent(index)"
+          class="dropdown__item"
+          >{{ val }}</li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -51,21 +53,16 @@ export default {
   data() {
     return {
       lengthDataList: null,
-      currentElementNumber: null,
+      currentElementNumber: -1,
     }
   },
   watch: {
     moveNextDropdownItem: function() {
-      if(this.currentElementNumber === null) {
-        // Значение -1 т.к. метод toggleToNextCurrentElement предусматривает возврат
-        // к началу списка по достижении конца списка
-        this.currentElementNumber = -1
-      }
       this.toggleToNextCurrentElement()
       this.returnNewValueToParent()
     },
     movePreviousDropdownItem: function() {
-      if(this.currentElementNumber === null) {
+      if(this.currentElementNumber === -1) {
         // Значение this.lengthDataList т.к. метод toggleToPreviousCurrentElement предусматривает возврат
         // к концу списка по достижении начала списка
         this.currentElementNumber = this.lengthDataList
@@ -74,19 +71,19 @@ export default {
       this.returnNewValueToParent()
     },
     moveInputedItem() {
-      this.toggleClickedItemToCurrent(this.moveInputedItem)
-      this.currentElementNumber = this.moveInputedItem
-      // this.returnNewValueToParent()
-}
+      this.toggleNewCurrent(this.moveInputedItem)
+      this.returnNewValueToParent(true)
+    }
   },
   methods: {
-    toggleClickedItemToCurrent(index) {
-      if(this.currentElementNumber === null) {
-        // Значение т.к. this.currentElementNumber имеет начальное значение null
-        this.currentElementNumber = 0
-      }
-      this.renderNewCurrentElement(index)
-      this.currentElementNumber = index
+    toggleClickedItemToCurrent(indexElement) {
+      this.toggleNewCurrent(indexElement)
+      this.returnNewValueToParent()
+      this.$emit('close-dropdown')
+    },
+    toggleNewCurrent(newIndexElement) {
+      this.renderNewCurrentElement(newIndexElement)
+      this.currentElementNumber = newIndexElement
     },
     toggleToNextCurrentElement() {
       let newCurrentElement = null
@@ -108,15 +105,21 @@ export default {
       this.renderNewCurrentElement(newCurrentElement)
       this.currentElementNumber = newCurrentElement
     },
-    renderNewCurrentElement(CurrentElem) {
+    renderNewCurrentElement(newCurrentElem) {
       if (this.currentElementNumber !== -1) {
         this.$refs[this.currentElementNumber][0].classList.remove('active')
       }
-      this.$refs[CurrentElem][0].classList.add('active')
+      if (newCurrentElem !== -1) {
+        this.$refs[newCurrentElem][0].classList.add('active')
+      }
     },
-    returnNewValueToParent() {
+    returnNewValueToParent(isForInsertion = false) {
       const newCurrentValue = this.$refs[this.currentElementNumber][0].innerHTML
-      this.$emit('selected-new-current-element', newCurrentValue)
+      if (isForInsertion) {
+        this.$emit('selected-new-current-element', newCurrentValue)
+      } else {
+        this.$emit('choosen-new-current-element', newCurrentValue)
+      }
     }
 
   },
@@ -127,15 +130,19 @@ export default {
   
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 @import '../assets/variables.less';
 
 
 .dropdown {
-  padding: 12px 0;
-  overflow-y: scroll;
   z-index: 1;
   background-color: @background-color-common;
+  padding: 12px 0;
+
+  &__wrapper {
+    overflow-y: scroll;
+    height: 100%;
+  }
   
   &__list {
 
@@ -150,6 +157,7 @@ export default {
     padding: 12px 15px 11px 15px;
     text-align: left;
     color: @text-gray;
+    user-select: none;
 
     &.active,
     &:hover {

@@ -1,12 +1,10 @@
-<!-- TODO импортировать LangList по условию hasDropDown == true -->
-
 <template>
   <div
     class="control-input-text"
+    :class="{'has-dropdown' : hasDropdown}"
   >
     <label
       class="control-input-text__label"
-      :class="{'has-dropdown' : hasDropdown}"
     >
       <span class="control-input-text__label-text">
         {{ label }}
@@ -17,22 +15,23 @@
         class="input-text"
         :placeholder="placeholder"
         v-on="getInputListeners"
-        ref="input"
       >
+    </label>
     
     <DropDown
       v-if="hasDropdown"
       v-show="isDropdownOpen"
-      :dropdown-list="hasDropdown ? dropdownList : null"
+      :dropdown-list="dropdownList"
       :move-next-dropdown-item="selectNextDropdownItem"
       :move-previous-dropdown-item="selectPreviousDropdownItem"
       :move-inputed-item="matchItem"
-      @selected-new-current-element="pushDropdownItem"
+      @choosen-new-current-element="pushSelectedItemToInput"
+      @selected-new-current-element="saveSelectedItemValue"
+      @close-dropdown="closeDropdown()"
       class="control-input-text__dropdown"
     />
 
     
-    </label>
 
     <span
       :class="{ active: !valid }"
@@ -58,7 +57,6 @@ export default {
       type: Boolean,
       default: false
     },
-    // TODO сделать условное добавление свойства при hasDropdown == true
     dropdownList: {
       type: Object,
       default: function () {
@@ -78,14 +76,22 @@ export default {
         }
       },
     },
-    matchItem: Number,
   },
+  // TODO сделать условное добавление свойства при hasDropdown == true
   data() {
     return {
       isDropdownOpen: false,
       selectNextDropdownItem: false,
       selectPreviousDropdownItem: false,
       inputValue: '',
+      matchItem: null,
+      dropdownListArrayReflection: [],
+      selectedDropdownValue: '',
+    }
+  },
+  watch: {
+    value: function() {
+      this.selectedDropdownValue = this.value
     }
   },
   computed: {
@@ -93,7 +99,7 @@ export default {
       if (this.hasDropdown) {
         return {
           input: (e) => {
-            this.passMatchedItem()
+            this.passMatchedElement()
           },
           keydown: (e) => {
             switch (e.keyCode) {
@@ -105,54 +111,75 @@ export default {
                 e.preventDefault()
                 this.selectPreviousDropdownItem = !this.selectPreviousDropdownItem
                 break
+              case 13:
+                // Превентим отправку формы
+                e.preventDefault()
+                this.pushSelectedItemToInput(this.selectedDropdownValue)
+                this.closeDropdown()
             }
           },
           focus: () => {
+            // this.$emit('focus')
             this.isDropdownOpen = true
           },
           blur:() => {
-            // this.isDropdownOpen = false
+              // this.isDropdownOpen = false
+            // window.setTimeout(() => {
+            //     // this.isDropdownOpen = false
+            // }, 100)
+            // this.$nextTick(function () {
+
+            // })
           },
         }
       }
     },
   },
   methods: {
-    pushDropdownItem: function(selectedValue) {
-      this.$refs.input.value = selectedValue
+    pushSelectedItemToInput: function(selectedValue) {
+      this.inputValue = selectedValue
     },
-    passMatchedItem() {
-      let matchElementNumber = this.matchInputElement(this.inputValue)
-      if (matchElementNumber !== null) {
-        this.matchItem = matchElementNumber
-
-      }
+    passMatchedElement() {
+      let matchedElementNumber = this.matchInputElement(this.inputValue)
+      this.matchItem = matchedElementNumber
     },
-    matchInputElement(serchedSubstrName) {
+    matchInputElement(serchedSubstrElemName) {
       let index = 0;
-      index = Object.entries(this.dropdownList).map(curent => curent[1]).findIndex(elem => elem.startsWith(serchedSubstrName))
-      // index = Object.entries(this.dropdownList).map(curent => curent[1]).findIndex(elem => elem == serchedSubstrName)
-      if (index != -1) {
-        return index
-      } else {
-        return null
+      serchedSubstrElemName = serchedSubstrElemName.toLowerCase()
+      if (serchedSubstrElemName === '') {
+        // Исключаем пустую строку, т.к. findIndex считает, что любая строка
+        // начинается с пустой строки
+        return -1
       }
+      index = this.dropdownListArrayReflection
+                  .findIndex((elem) => {
+                    elem = elem.toLowerCase()
+                    return elem.startsWith(serchedSubstrElemName)
+                  })
+      // Если совбадение не найдено, то index = -1
+      return index
     },
-    compareStrings(substr) {
-      startsWith
-    }
-  },
-  watch: {
-
+    saveSelectedItemValue(newValue) {
+      this.selectedDropdownValue = newValue
+    },
+    updateDropdownListArrayReflection() {
+      this.dropdownListArrayReflection = Object.entries(this.dropdownList).map(curent => curent[1])
+    },
+    closeDropdown() {
+      this.isDropdownOpen = false
+    },
   },
   components: {
-    DropDown
+    DropDown,
+  },
+  created: function() {
+    this.updateDropdownListArrayReflection()
   }
 };
   
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 @import '../assets/variables.less';
 @import '../assets/blocks/input-text.less';
 
@@ -169,6 +196,11 @@ export default {
   flex-direction: column;
   line-height: 1.3em;
 
+  &:active,
+  &:focus {
+    border: none;
+  }
+
   & > * {
     margin-bottom: @elements-margin-bottom;
   }
@@ -181,6 +213,7 @@ export default {
     display: flex;
     flex-direction: column;
     Size: 16px;
+    outline: none;
   }
 
   &__label-text {
@@ -188,6 +221,7 @@ export default {
     font-weight: 500;
     line-height: 21px;
     color: @text-gray;
+    user-select: none;
   }
 
   &__warn-mess {
@@ -205,7 +239,8 @@ export default {
     @list-height: 200px;
     position: absolute;
     height: @list-height;
-    bottom: calc(-1 * (@list-height + 4px));
+    top: 84px;
+    // bottom: calc(-1 * (@list-height + 4px));
     width: 100%;
   }
 }
