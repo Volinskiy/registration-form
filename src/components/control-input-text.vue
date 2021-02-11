@@ -21,6 +21,7 @@
     <DropDown
       v-if="hasDropdown"
       v-show="isDropdownOpen"
+      :is-dropdown-open="isDropdownOpen"
       :dropdown-list="dropdownList"
       :move-next-dropdown-item="selectNextDropdownItem"
       :move-previous-dropdown-item="selectPreviousDropdownItem"
@@ -100,6 +101,9 @@ export default {
         return {
           input: (e) => {
             this.passMatchedElement()
+            if(!this.isDropdownOpen) {
+              this.isDropdownOpen = true
+            }
           },
           keydown: (e) => {
             switch (e.keyCode) {
@@ -137,10 +141,14 @@ export default {
   },
   methods: {
     pushSelectedItemToInput: function(selectedValue) {
-      this.inputValue = selectedValue
+      // Если не сматчена ни одно значение, не обновляем содержимое input
+      if (selectedValue !== ''){
+        this.inputValue = selectedValue
+      }
     },
     passMatchedElement() {
       let matchedElementNumber = this.matchInputElement(this.inputValue)
+      console.log(matchedElementNumber);
       this.matchItem = matchedElementNumber
     },
     matchInputElement(serchedSubstrElemName) {

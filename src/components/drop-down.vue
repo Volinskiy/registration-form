@@ -1,7 +1,8 @@
 <template>
   <div class="dropdown">
-    <div class="dropdown__wrapper">
+    <div ref="wrapper" class="dropdown__wrapper">
       <ul class="dropdown__list">
+        <!-- TODO протестировать как меняется индекс при удалениие/добавлении нового свойства -->
         <li
           v-for="(val, key, index) in dropdownList"
           :ref="index"
@@ -48,12 +49,20 @@ export default {
     moveInputedItem: {
       type: Number,
       default: null
+    },
+    isDropdownOpen: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       lengthDataList: null,
       currentElementNumber: -1,
+      dropdownSizeParams: {
+        height: 0,
+        itemHeight: 0,
+      }
     }
   },
   watch: {
@@ -73,6 +82,9 @@ export default {
     moveInputedItem() {
       this.toggleNewCurrent(this.moveInputedItem)
       this.returnNewValueToParent(true)
+    },
+    isDropdownOpen() {
+      this.getDropdownSizes()
     }
   },
   methods: {
@@ -94,6 +106,7 @@ export default {
       }
       this.renderNewCurrentElement(newCurrentElement)
       this.currentElementNumber = newCurrentElement
+      this.scrollDownToCurrenElement()
     },
     toggleToPreviousCurrentElement() {
       let newCurrentElement = null
@@ -104,8 +117,9 @@ export default {
       }
       this.renderNewCurrentElement(newCurrentElement)
       this.currentElementNumber = newCurrentElement
+      this.scrollUpToCurrenElement()
     },
-    renderNewCurrentElement(newCurrentElem) {
+    renderNewCurrentElement(newCurrentElem) {      
       if (this.currentElementNumber !== -1) {
         this.$refs[this.currentElementNumber][0].classList.remove('active')
       }
@@ -114,18 +128,41 @@ export default {
       }
     },
     returnNewValueToParent(isForInsertion = false) {
-      const newCurrentValue = this.$refs[this.currentElementNumber][0].innerHTML
+      let newCurrentValue = ''
+      if (this.currentElementNumber !== -1) {
+        newCurrentValue = this.$refs[this.currentElementNumber][0].innerHTML
+      }
       if (isForInsertion) {
         this.$emit('selected-new-current-element', newCurrentValue)
       } else {
         this.$emit('choosen-new-current-element', newCurrentValue)
       }
+    },
+    getDropdownSizes() {
+      this.dropdownSizeParams.height = this.$refs["wrapper"].clientHeight;
+      if (this.$refs[0]){
+        this.dropdownSizeParams.itemHeight = this.$refs[0][0].clientHeight
+      }
+    },
+    scrollDownToCurrenElement() {
+      let scrollTop = this.$refs["wrapper"].scrollTop
+      console.log('scrollTop' + scrollTop);
+      console.log('Высота до низа текущего эл-та' + ((this.currentElementNumber + 1) * this.dropdownSizeParams.itemHeight));
+      console.log('Высота до низа окна' + (scrollTop + this.dropdownSizeParams.height));
+      if (((this.currentElementNumber + 1) * this.dropdownSizeParams.itemHeight) > (scrollTop + this.dropdownSizeParams.height) ) {
+        this.$refs["wrapper"].scrollTo(0, scrollTop + this.dropdownSizeParams.itemHeight)
+      }
+    },
+    scrollUpToCurrenElement() {
+      let scrollTop = this.$refs["wrapper"].scrollTop
+      if ((this.currentElementNumber * this.dropdownSizeParams.itemHeight) < scrollTop) {
+        this.$refs["wrapper"].scrollTo(0, scrollTop - this.dropdownSizeParams.itemHeight)
+      }
     }
-
   },
   created: function() {
     this.lengthDataList = Object.keys(this.dropdownList).length - 1
-  }
+  },
 };
   
 </script>
@@ -154,7 +191,7 @@ export default {
   &__item {
     font-size: 16px;
     line-height: 1.3em;
-    padding: 12px 15px 11px 15px;
+    padding: 12px 15px 12px 15px;
     text-align: left;
     color: @text-gray;
     user-select: none;
