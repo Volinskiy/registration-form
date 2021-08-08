@@ -8,4 +8,3 @@
 <style lang="less">
   @import 'assets/common.less';
 </style>
-z
